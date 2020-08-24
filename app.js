@@ -1,4 +1,5 @@
 //jshint esversion:6
+require("dotenv").config();
 const express =require("express");
 const bodyParser=require("body-parser");
 const ejs=require("ejs");
@@ -8,14 +9,14 @@ const encrypt=require("mongoose-encryption");
 app.use(express.static("public"));
 app.set('view engine', 'ejs');
 app.use(bodyParser.urlencoded({extended: true}));
-
+console.log(process.env.API_KEY);
 mongoose.connect("mongodb://localhost:27017/userDB", { useNewUrlParser: true,useUnifiedTopology:true });
 const userSchema=new mongoose.Schema({
   email:String,
   password:String
 });
-const secret="Thisisalittlesecret";
-userSchema.plugin(encrypt,{secret:secret,encryptedFields:["password"]});
+
+userSchema.plugin(encrypt,{secret:process.env.SECRET,encryptedFields:["password"]});
 const User = new mongoose.model("User",userSchema);
  app.get("/",function(req,res){
   res.render("home");
